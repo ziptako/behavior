@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package behavior;
+
+option go_package = "./behavior";
+
+/*============================================================
+behaviorService
+行为数据管理服务，提供行为数据的记录、查询和删除功能
+============================================================*/
+service behaviorService {
+  // RecordBehavior 记录行为数据
+  rpc RecordBehavior(RecordBehaviorRequest) returns (RecordBehaviorResponse);
+
+  // BatchRecordBehavior 批量记录行为数据
+  rpc BatchRecordBehavior(BatchRecordBehaviorRequest) returns (BatchRecordBehaviorResponse);
+
+  // GetBehavior 根据ID获取行为数据详情
+  rpc GetBehavior(GetBehaviorRequest) returns (Behavior);
+
+  // ListBehaviors 分页查询行为数据列表
+  rpc ListBehaviors(ListBehaviorsRequest) returns (ListBehaviorsResponse);
+
+  // DeleteBehavior 删除行为数据
+  rpc DeleteBehavior(DeleteBehaviorRequest) returns (DeleteBehaviorResponse);
+
+  // BatchDeleteBehavior 批量删除行为数据
+  rpc BatchDeleteBehavior(BatchDeleteBehaviorRequest) returns (BatchDeleteBehaviorResponse);
+}
+
+/*================ 实体定义 ================*/
+
+// Behavior 行为数据实体
+message Behavior {
+  int64 id = 1;                    // 行为数据ID
+  string key = 2;                  // 行为标识键
+  int64 user_id = 3;               // 用户ID
+  string data = 4;                 // 行为数据（JSON格式）
+  int64 created_at = 5;            // 创建时间戳（毫秒）
+  int64 updated_at = 6;            // 更新时间戳（毫秒）
+}
+
+
+
+/*================ 请求/响应消息 ================*/
+
+// RecordBehaviorRequest 记录行为数据请求
+message RecordBehaviorRequest {
+  string key = 1;                  // 行为标识键
+  int64 user_id = 2;               // 用户ID
+  string data = 3;                 // 行为数据（JSON格式）
+}
+
+// RecordBehaviorResponse 记录行为数据响应
+message RecordBehaviorResponse {
+  bool success = 1;                // 记录是否成功
+  int64 id = 2;                    // 新创建的行为数据ID（可选）
+}
+
+// BatchRecordBehaviorRequest 批量记录行为数据请求
+message BatchRecordBehaviorRequest {
+  repeated RecordBehaviorRequest behaviors = 1;  // 行为数据列表
+}
+
+// BatchRecordBehaviorResponse 批量记录行为数据响应
+message BatchRecordBehaviorResponse {
+  int64 success_count = 1;         // 成功记录数量
+  int64 fail_count = 2;            // 失败记录数量
+  repeated RecordBehaviorResponse success_list = 3;  // 成功记录列表
+  repeated RecordBehaviorRequest fail_list = 4;      // 失败记录列表
+}
+
+// GetBehaviorRequest 获取行为数据请求
+message GetBehaviorRequest {
+  int64 id = 1;                    // 行为数据ID
+}
+
+// ListBehaviorsRequest 分页查询行为数据请求
+message ListBehaviorsRequest {
+  int32 page = 1;                  // 页码（从1开始）
+  int32 page_size = 2;             // 每页数量
+  string key = 3;                  // 行为标识键（可选）
+  int64 user_id = 4;               // 用户ID（可选）
+  int64 start_time = 5;            // 开始时间戳（可选）
+  int64 end_time = 6;              // 结束时间戳（可选）
+}
+
+// ListBehaviorsResponse 分页查询行为数据响应
+message ListBehaviorsResponse {
+  repeated Behavior list = 1;      // 行为数据列表
+  int64 total = 2;                 // 总数量
+  int32 page = 3;                  // 当前页码
+  int32 size = 4;                  // 每页数量
+}
+
+
+
+// DeleteBehaviorRequest 删除行为数据请求
+message DeleteBehaviorRequest {
+  int64 id = 1;                    // 行为数据ID
+}
+
+// DeleteBehaviorResponse 删除行为数据响应
+message DeleteBehaviorResponse {
+  bool success = 1;                // 删除是否成功
+}
+
+// BatchDeleteBehaviorRequest 批量删除行为数据请求
+message BatchDeleteBehaviorRequest {
+  repeated int64 ids = 1;          // 行为数据ID列表
+}
+
+// BatchDeleteBehaviorResponse 批量删除行为数据响应
+message BatchDeleteBehaviorResponse {
+  int64 deleted_count = 1;         // 删除成功数量
+  repeated int64 failed_ids = 2;   // 删除失败的ID列表
+}
