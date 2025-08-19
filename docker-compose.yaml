@@ -1,0 +1,6 @@
+services:
+  behavior:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ziptako/behavior:v0.0.1
